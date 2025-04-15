@@ -1,10 +1,13 @@
 package com.example.emtlab.service.application.impl;
 
 import com.example.emtlab.dto.CreateHostDto;
+import com.example.emtlab.dto.DisplayGuestDto;
 import com.example.emtlab.dto.DisplayHostDto;
 import com.example.emtlab.model.domain.Country;
+import com.example.emtlab.model.domain.Guest;
 import com.example.emtlab.service.application.HostApplicationService;
 import com.example.emtlab.service.domain.CountryService;
+import com.example.emtlab.service.domain.GuestService;
 import com.example.emtlab.service.domain.HostService;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +18,12 @@ import java.util.Optional;
 public class HostApplicationServiceImpl implements HostApplicationService {
 
     private final HostService hostService;
+    private final GuestService guestService;
     private final CountryService countryService;
 
-    public HostApplicationServiceImpl(HostService hostService, CountryService countryService) {
+    public HostApplicationServiceImpl(HostService hostService, GuestService guestService, CountryService countryService) {
         this.hostService = hostService;
+        this.guestService = guestService;
         this.countryService = countryService;
     }
 
@@ -50,6 +55,22 @@ public class HostApplicationServiceImpl implements HostApplicationService {
                         createHostDto.toHost(country.orElse(null))
                 )
                 .map(DisplayHostDto::from);
+    }
+
+    @Override
+    public Optional<DisplayHostDto> addGuest(Long id, Guest guest) {
+
+        if (guest != null && guestService.findById(guest.getId()).isPresent()) {
+            return hostService.addGuest(id, guest).map(DisplayHostDto::from);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public List<DisplayGuestDto> findAllGuests(Long id) {
+        return hostService.findById(id).get()
+                .getHistoryOfGuests().stream().map(DisplayGuestDto::from).toList();
     }
 
     @Override
