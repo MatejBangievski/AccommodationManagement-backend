@@ -12,7 +12,10 @@ public record DisplayAccommodationDto(
         String name,
         AccommodationCategory category,
         Long hostId,
-        Integer numRooms
+        Integer numRooms,
+        String username,
+        boolean isReserved,
+        boolean isBooked
 ) {
 
     public static DisplayAccommodationDto from(Accommodation accommodation) {
@@ -21,7 +24,10 @@ public record DisplayAccommodationDto(
                 accommodation.getName(),
                 accommodation.getCategory(),
                 accommodation.getHost().getId(),
-                accommodation.getNumRooms()
+                accommodation.getNumRooms(),
+                accommodation.getUserStaying() != null ? accommodation.getUserStaying().getUsername() : null,
+                accommodation.isReserved(),
+                accommodation.isBooked()
         );
     }
 

@@ -3,6 +3,7 @@ package com.example.emtlab.web;
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.CreateHostDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
+import com.example.emtlab.model.domain.User;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,5 +67,37 @@ public class AccommodationController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Reserve an accommodation", description = "Reserves an accommodation for the user.")
+    @PostMapping("/{id}/reserve")
+    public ResponseEntity<DisplayAccommodationDto> reserveAccommodation(@PathVariable Long id, @RequestBody String username) {
+        return accommodationApplicationService.reserve(id, username)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Remove reservation", description = "Removes the reservation of an accommodation.")
+    @PostMapping("/{id}/removeReservation")
+    public ResponseEntity<DisplayAccommodationDto> removeReservation(@PathVariable Long id) {
+        return accommodationApplicationService.removeReservation(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Book an accommodation", description = "Books an accommodation for the user.")
+    @PostMapping("/{id}/book")
+    public ResponseEntity<DisplayAccommodationDto> bookAccommodation(@PathVariable Long id, @RequestBody String username) {
+        return accommodationApplicationService.book(id, username)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Complete stay", description = "Completes the stay for an accommodation.")
+    @PostMapping("/{id}/completeStay")
+    public ResponseEntity<DisplayAccommodationDto> completeStay(@PathVariable Long id) {
+        return accommodationApplicationService.completeStay(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

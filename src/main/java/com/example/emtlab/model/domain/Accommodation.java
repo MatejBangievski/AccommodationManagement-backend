@@ -1,6 +1,7 @@
 package com.example.emtlab.model.domain;
 
 import com.example.emtlab.model.enumerations.AccommodationCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,10 +16,19 @@ public class Accommodation {
     private String name;
     @Enumerated
     private AccommodationCategory category;
+
     @ManyToOne
+    @JsonIgnore
     private Host host;
 
     private Integer numRooms;
+
+    @ManyToOne
+    @JsonIgnore
+    private User userStaying = null;
+
+    private boolean isReserved = false;
+    private boolean isBooked = false;
 
     public Accommodation() {
     }

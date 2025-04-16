@@ -6,6 +6,11 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/*
+    lAB 1 DOPOLNITELNO BARANJE
+ */
+
 @Data
 @Entity
 public class Guest {
