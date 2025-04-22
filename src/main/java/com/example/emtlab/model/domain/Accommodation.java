@@ -14,7 +14,7 @@ public class Accommodation {
     private Long id;
 
     private String name;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private AccommodationCategory category;
 
     @ManyToOne

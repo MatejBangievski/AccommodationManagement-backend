@@ -4,6 +4,7 @@ import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.CreateHostDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
 import com.example.emtlab.model.domain.User;
+import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -99,5 +100,11 @@ public class AccommodationController {
         return accommodationApplicationService.completeStay(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Get count for every category", description = "Retrieves a list of all categories with it's count")
+    @GetMapping("/statistics")
+    public List<AccommodationProjection> findStatistics() {
+        return accommodationApplicationService.accommodationStatistics();
     }
 }

@@ -50,6 +50,7 @@ public class DataInitializer {
         hostRepository.save(host3);
 
         accommodationRepository.save(new Accommodation("Castle Oakwood", AccommodationCategory.HOTEL, host1, 12));
+        accommodationRepository.save(new Accommodation("Castle Kale", AccommodationCategory.HOTEL, host1, 20));
         accommodationRepository.save(new Accommodation("Pierre's", AccommodationCategory.APARTMENT, host2, 2));
         accommodationRepository.save(new Accommodation("Dom", AccommodationCategory.HOUSE, host1, 6));
 

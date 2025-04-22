@@ -7,6 +7,7 @@ import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.Country;
 import com.example.emtlab.model.domain.Host;
 import com.example.emtlab.model.domain.User;
+import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.HostService;
@@ -83,5 +84,10 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     public Optional<DisplayAccommodationDto> completeStay(Long id) {
         Optional<Accommodation> accommodation = accommodationService.completeStay(id);
         return accommodation.map(DisplayAccommodationDto::from);
+    }
+
+    @Override
+    public List<AccommodationProjection> accommodationStatistics() {
+        return accommodationService.accommodationStatistics();
     }
 }

@@ -6,15 +6,16 @@ import com.example.emtlab.model.exceptions.AccommodationAlreadyReservedException
 import com.example.emtlab.model.exceptions.AccommodationNotBookedException;
 import com.example.emtlab.model.exceptions.AccommodationNotReservedException;
 import com.example.emtlab.model.exceptions.UserNotFoundException;
+import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.repository.AccommodationRepository;
 import com.example.emtlab.repository.UserRepository;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.HostService;
-import com.example.emtlab.service.domain.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccommodationServiceImpl implements AccommodationService {
@@ -134,5 +135,10 @@ public class AccommodationServiceImpl implements AccommodationService {
         accommodation.setUserStaying(null);
 
         return Optional.of(accommodationRepository.save(accommodation));
+    }
+
+    @Override
+    public List<AccommodationProjection> accommodationStatistics() {
+        return accommodationRepository.takeCategoryAndCountByProjection().stream().collect(Collectors.toList());
     }
 }

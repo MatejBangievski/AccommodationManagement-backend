@@ -2,6 +2,7 @@ package com.example.emtlab.service.domain;
 
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
+import com.example.emtlab.model.projections.AccommodationProjection;
 import org.springframework.security.web.server.authentication.PreventLoginServerMaximumSessionsExceededHandler;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface AccommodationService {
     Optional<Accommodation> book(Long id, String username);
 
     Optional<Accommodation> completeStay(Long id);
+
+    List<AccommodationProjection> accommodationStatistics();
 }
