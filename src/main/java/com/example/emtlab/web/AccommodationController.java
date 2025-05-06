@@ -1,10 +1,9 @@
 package com.example.emtlab.web;
 
 import com.example.emtlab.dto.CreateAccommodationDto;
-import com.example.emtlab.dto.CreateHostDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
-import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.projections.AccommodationProjection;
+import com.example.emtlab.model.views.AccommodationsPerHostView;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +17,7 @@ import java.util.List;
 @Tag(name = "Accommodation API", description = "Endpoints for managing accommodations.")
 public class AccommodationController {
 
-    private AccommodationApplicationService accommodationApplicationService;
+    private final AccommodationApplicationService accommodationApplicationService;
 
     public AccommodationController(AccommodationApplicationService accommodationApplicationService) {
         this.accommodationApplicationService = accommodationApplicationService;
@@ -102,9 +101,22 @@ public class AccommodationController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get count for every category", description = "Retrieves a list of all categories with it's count")
+    @Operation(summary = "Get count for every category", description = "Retrieves a list of all categories with it's count.")
     @GetMapping("/statistics")
     public List<AccommodationProjection> findStatistics() {
         return accommodationApplicationService.accommodationStatistics();
+    }
+
+    @Operation(summary = "Get the number of accommodations for every host", description = "Retrieves a list of hosts with the number of his accommodations.")
+    @GetMapping("/by-host")
+    public List<AccommodationsPerHostView> findAccommodationsByHost() {
+        return accommodationApplicationService.getAccommodationsByHost();
+    }
+
+    @Operation(summary = "Force refresh materialized view", description = "Refreshes the materialized view.")
+    @GetMapping("/force-refresh")
+    public ResponseEntity<Void> refreshMaterializedView() {
+        accommodationApplicationService.refreshMaterializedView();
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,9 +1,9 @@
 package com.example.emtlab.service.application;
 
 import com.example.emtlab.dto.CreateHostDto;
-import com.example.emtlab.dto.DisplayGuestDto;
 import com.example.emtlab.dto.DisplayHostDto;
-import com.example.emtlab.model.domain.Guest;
+import com.example.emtlab.model.projections.HostProjection;
+import com.example.emtlab.model.views.HostsPerCountryView;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +20,7 @@ public interface HostApplicationService {
 
     void deleteById(Long id);
 
-    //todo: Check if this can be done with createGuestDto - has no guest id
-    Optional<DisplayHostDto> addGuest(Long id, Guest guest);
+    List<HostsPerCountryView> getHostsPerCountry();
 
-    List<DisplayGuestDto> findAllGuests(Long id);
+    List<HostProjection> getNameAndSurname();
 }

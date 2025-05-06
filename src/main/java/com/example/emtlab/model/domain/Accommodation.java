@@ -8,12 +8,12 @@ import lombok.Data;
 @Data
 @Entity
 public class Accommodation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
     @Enumerated(EnumType.STRING)
     private AccommodationCategory category;
 
@@ -24,10 +24,14 @@ public class Accommodation {
     private Integer numRooms;
 
     @ManyToOne
+    @JoinColumn(name = "user_staying_id", referencedColumnName = "username")
     @JsonIgnore
     private User userStaying = null;
 
+    @Column(name = "is_accommodation_reserved")
     private boolean isReserved = false;
+
+    @Column(name = "is_accommodation_booked")
     private boolean isBooked = false;
 
     public Accommodation() {

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "shop_users")
+@Table(name = "accommodation_users")
 public class User implements UserDetails {
 
     @Id
@@ -27,7 +27,7 @@ public class User implements UserDetails {
 
     private String surname;
 
-    @OneToMany
+    @OneToMany(mappedBy = "userStaying")
     @JsonIgnore
     private List<Accommodation> accommodationReservations;
 

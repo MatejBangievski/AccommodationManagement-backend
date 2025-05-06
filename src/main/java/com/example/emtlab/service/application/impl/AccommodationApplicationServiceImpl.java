@@ -2,12 +2,10 @@ package com.example.emtlab.service.application.impl;
 
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
-import com.example.emtlab.dto.DisplayHostDto;
 import com.example.emtlab.model.domain.Accommodation;
-import com.example.emtlab.model.domain.Country;
 import com.example.emtlab.model.domain.Host;
-import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.projections.AccommodationProjection;
+import com.example.emtlab.model.views.AccommodationsPerHostView;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.HostService;
@@ -90,4 +88,17 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     public List<AccommodationProjection> accommodationStatistics() {
         return accommodationService.accommodationStatistics();
     }
+
+    @Override
+    public void refreshMaterializedView() {
+        accommodationService.refreshMaterializedView();
+    }
+
+    @Override
+    public List<AccommodationsPerHostView> getAccommodationsByHost() {
+        List<AccommodationsPerHostView> accommodationsByHost = accommodationService.getAccommodationsByHost();
+        return accommodationsByHost;
+    }
+
+
 }

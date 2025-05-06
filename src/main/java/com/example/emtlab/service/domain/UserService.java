@@ -24,4 +24,6 @@ public interface UserService extends UserDetailsService {
     List<Accommodation> findAllReservations(String username);
 
     User bookAllReservations(String username);
+
+    List<User> getAllUsers();
 }

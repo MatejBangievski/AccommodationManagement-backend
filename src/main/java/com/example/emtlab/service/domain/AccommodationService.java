@@ -1,9 +1,8 @@
 package com.example.emtlab.service.domain;
 
 import com.example.emtlab.model.domain.Accommodation;
-import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.projections.AccommodationProjection;
-import org.springframework.security.web.server.authentication.PreventLoginServerMaximumSessionsExceededHandler;
+import com.example.emtlab.model.views.AccommodationsPerHostView;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +27,8 @@ public interface AccommodationService {
     Optional<Accommodation> completeStay(Long id);
 
     List<AccommodationProjection> accommodationStatistics();
+
+    void refreshMaterializedView();
+
+    List<AccommodationsPerHostView> getAccommodationsByHost();
 }

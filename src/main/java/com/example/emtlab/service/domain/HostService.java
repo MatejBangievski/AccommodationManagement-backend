@@ -1,7 +1,8 @@
 package com.example.emtlab.service.domain;
 
-import com.example.emtlab.model.domain.Guest;
 import com.example.emtlab.model.domain.Host;
+import com.example.emtlab.model.projections.HostProjection;
+import com.example.emtlab.model.views.HostsPerCountryView;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,9 @@ public interface HostService {
 
     void deleteById(Long id);
 
-    Optional<Host> addGuest(Long id, Guest guest);
+    void refreshMaterializedView();
 
-    List<Guest> findAllGuests(Long id);
+    List<HostsPerCountryView> getHostsPerCountry();
+
+    List<HostProjection> getNameAndSurname();
 }

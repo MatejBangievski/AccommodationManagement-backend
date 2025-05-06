@@ -8,7 +8,6 @@ import com.example.emtlab.model.exceptions.InvalidUsernameOrPasswordException;
 import com.example.emtlab.model.exceptions.PasswordsDoNotMatchException;
 import com.example.emtlab.model.exceptions.UsernameAlreadyExistsException;
 import com.example.emtlab.model.exceptions.InvalidUserCredentialsException;
-import com.example.emtlab.repository.AccommodationRepository;
 import com.example.emtlab.repository.UserRepository;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.UserService;
@@ -97,6 +96,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAllWithoutReservations();
     }
 
     @Override

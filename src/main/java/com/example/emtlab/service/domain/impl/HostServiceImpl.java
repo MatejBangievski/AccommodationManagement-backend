@@ -1,27 +1,34 @@
 package com.example.emtlab.service.domain.impl;
 
-import com.example.emtlab.model.domain.Guest;
+import com.example.emtlab.events.HostChangedEvent;
 import com.example.emtlab.model.domain.Host;
-import com.example.emtlab.repository.GuestRepository;
+import com.example.emtlab.model.enumerations.EntityChangeType;
+import com.example.emtlab.model.projections.HostProjection;
+import com.example.emtlab.model.views.HostsPerCountryView;
 import com.example.emtlab.repository.HostRepository;
+import com.example.emtlab.repository.HostsPerCountryViewRepostiory;
 import com.example.emtlab.service.domain.CountryService;
 import com.example.emtlab.service.domain.HostService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class HostServiceImpl implements HostService {
 
     private final HostRepository hostRepository;
-    private final GuestRepository guestRepository;
+    private final HostsPerCountryViewRepostiory hostsPerCountryViewRepostiory;
     private final CountryService countryService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public HostServiceImpl(HostRepository hostRepository, GuestRepository guestRepository, CountryService countryService) {
+    public HostServiceImpl(HostRepository hostRepository, HostsPerCountryViewRepostiory hostsPerCountryViewRepostiory, CountryService countryService, ApplicationEventPublisher applicationEventPublisher) {
         this.hostRepository = hostRepository;
-        this.guestRepository = guestRepository;
+        this.hostsPerCountryViewRepostiory = hostsPerCountryViewRepostiory;
         this.countryService = countryService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -36,15 +43,16 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public Optional<Host> save(Host host) {
-        if (host.getCountry() != null &&
-                countryService.findById(host.getCountry().getId()).isPresent()) {
-            return Optional.of(
+        Optional<Host> savedHost = Optional.empty();
+        if (host.getCountry() != null && countryService.findById(host.getCountry().getId()).isPresent()) {
+            savedHost =  Optional.of(
                     hostRepository.save(new Host(
                             host.getName(), host.getSurname(),
                             countryService.findById(host.getCountry().getId()).get()
                     )));
         }
-        return Optional.empty();
+        applicationEventPublisher.publishEvent(new HostChangedEvent(savedHost, EntityChangeType.CREATED));
+        return savedHost;
     }
 
     @Override
@@ -59,29 +67,35 @@ public class HostServiceImpl implements HostService {
             if (host.getCountry() != null && countryService.findById(host.getCountry().getId()).isPresent()) {
                 existingHost.setCountry(countryService.findById(host.getCountry().getId()).get());
             }
-            return hostRepository.save(existingHost);
-        });
-    }
+            Host updatedHost = hostRepository.save(existingHost);
 
-    @Override
-    public Optional<Host> addGuest(Long id, Guest guest) {
-        return hostRepository.findById(id).map(existingHost -> {
-            if (guest != null &&
-                    guestRepository.findById(guest.getId()).isPresent()) {
-                        existingHost.getHistoryOfGuests().add(guest);
-            }
-            return hostRepository.save(existingHost);
+            applicationEventPublisher.publishEvent(new HostChangedEvent(updatedHost, EntityChangeType.UPDATED));
+            return updatedHost;
         });
-    }
-
-    @Override
-    public List<Guest> findAllGuests(Long id) {
-        return hostRepository.findById(id).get()
-                .getHistoryOfGuests().stream().toList();
     }
 
     @Override
     public void deleteById(Long id) {
-        hostRepository.deleteById(id);
+        hostRepository.findById(id).ifPresent(deletedHost -> {
+            applicationEventPublisher.publishEvent(
+                    new HostChangedEvent(deletedHost, EntityChangeType.DELETED)
+            );
+            hostRepository.deleteById(id);
+        });
+    }
+
+    @Override
+    public void refreshMaterializedView() {
+        hostsPerCountryViewRepostiory.refreshMaterializedView();
+    }
+
+    @Override
+    public List<HostsPerCountryView> getHostsPerCountry() {
+        return hostsPerCountryViewRepostiory.findAll();
+    }
+
+    @Override
+    public List<HostProjection> getNameAndSurname() {
+        return hostRepository.takeNameAndSurnameByProjection().stream().collect(Collectors.toList());
     }
 }

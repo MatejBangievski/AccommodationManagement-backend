@@ -26,5 +26,7 @@ public interface UserApplicationService {
     List<Accommodation> findAllReservations(String username);
 
     Optional<DisplayUserDto> bookAllReservations(String username);
+
+    List<User> getAllUsers();
 }
 

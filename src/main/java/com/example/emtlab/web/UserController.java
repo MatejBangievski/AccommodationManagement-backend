@@ -4,6 +4,7 @@ import com.example.emtlab.dto.CreateUserDto;
 import com.example.emtlab.dto.DisplayUserDto;
 import com.example.emtlab.dto.LoginUserDto;
 import com.example.emtlab.model.domain.Accommodation;
+import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.exceptions.InvalidArgumentsException;
 import com.example.emtlab.model.exceptions.InvalidUserCredentialsException;
 import com.example.emtlab.model.exceptions.PasswordsDoNotMatchException;
@@ -129,5 +130,14 @@ public class UserController {
         return userApplicationService.bookAllReservations(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Get all users", description = "Retrieves a list of all users without reservations.")
+    @ApiResponse(responseCode = "200", description = "List fetched successfully")
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userApplicationService.getAllUsers();
+        return users.isEmpty() ?
+                ResponseEntity.notFound().build() : ResponseEntity.ok(users);
     }
 }

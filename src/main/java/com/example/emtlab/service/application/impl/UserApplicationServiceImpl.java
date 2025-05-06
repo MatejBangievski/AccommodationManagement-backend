@@ -75,4 +75,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
         User user = userService.bookAllReservations(username);
         return Optional.of(DisplayUserDto.from(user));
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
 }

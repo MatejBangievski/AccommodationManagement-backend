@@ -45,7 +45,6 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> requests.requestMatchers(
                         "/api/accommodations/**",
                         "/api/countries/**",
-                        "/api/guests/**",
                         "/api/hosts/**",
                         "/api/user/**"
                 ).permitAll().anyRequest().hasRole("ADMIN"))

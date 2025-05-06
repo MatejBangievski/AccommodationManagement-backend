@@ -7,7 +7,9 @@ import com.example.emtlab.model.exceptions.AccommodationNotBookedException;
 import com.example.emtlab.model.exceptions.AccommodationNotReservedException;
 import com.example.emtlab.model.exceptions.UserNotFoundException;
 import com.example.emtlab.model.projections.AccommodationProjection;
+import com.example.emtlab.model.views.AccommodationsPerHostView;
 import com.example.emtlab.repository.AccommodationRepository;
+import com.example.emtlab.repository.AccommodationsPerHostViewRepository;
 import com.example.emtlab.repository.UserRepository;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.HostService;
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
 public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
+    private final AccommodationsPerHostViewRepository accommodationsPerHostViewRepository;
     private final UserRepository userRepository;
     private final HostService hostService;
 
-    public AccommodationServiceImpl(AccommodationRepository accommodationRepository, UserRepository userRepository, HostService hostService) {
+    public AccommodationServiceImpl(AccommodationRepository accommodationRepository, AccommodationsPerHostViewRepository accommodationsPerHostViewRepository, UserRepository userRepository, HostService hostService) {
         this.accommodationRepository = accommodationRepository;
+        this.accommodationsPerHostViewRepository = accommodationsPerHostViewRepository;
         this.userRepository = userRepository;
         this.hostService = hostService;
     }
@@ -43,23 +47,23 @@ public class AccommodationServiceImpl implements AccommodationService {
     // Do I need to check the enum as well?
     @Override
     public Optional<Accommodation> save(Accommodation accommodation) {
+        Optional<Accommodation> savedAccommodation = Optional.empty();
+
         if (accommodation.getHost() != null &&
                 hostService.findById(accommodation.getHost().getId()).isPresent()) {
-            return Optional.of(
-                    accommodationRepository.save(new Accommodation(
-                            accommodation.getName(), accommodation.getCategory(),
+                savedAccommodation = Optional.of(accommodationRepository.save(
+                        new Accommodation(accommodation.getName(), accommodation.getCategory(),
                             hostService.findById(accommodation.getHost().getId()).get(),
                             accommodation.getNumRooms()
                     )));
         }
-        return Optional.empty();
+        return savedAccommodation;
     }
 
 
     @Override
     public Optional<Accommodation> update(Long id, Accommodation accommodation) {
-        return accommodationRepository.findById(id)
-                .map(existingAccommodation -> {
+        return accommodationRepository.findById(id).map(existingAccommodation -> {
                     if (accommodation.getName() != null) {
                         existingAccommodation.setName(accommodation.getName());
                     }
@@ -72,7 +76,8 @@ public class AccommodationServiceImpl implements AccommodationService {
                     if (accommodation.getNumRooms() != null) {
                         existingAccommodation.setNumRooms(accommodation.getNumRooms());
                     }
-                    return accommodationRepository.save(existingAccommodation);
+                    Accommodation updatedAccommodation = accommodationRepository.save(existingAccommodation);
+                    return updatedAccommodation;
                 });
     }
 
@@ -140,5 +145,15 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public List<AccommodationProjection> accommodationStatistics() {
         return accommodationRepository.takeCategoryAndCountByProjection().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public void refreshMaterializedView() {
+        accommodationsPerHostViewRepository.refreshMaterializedView();
+    }
+
+    @Override
+    public List<AccommodationsPerHostView> getAccommodationsByHost() {
+        return accommodationsPerHostViewRepository.findAll();
     }
 }
