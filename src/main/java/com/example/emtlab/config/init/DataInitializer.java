@@ -1,4 +1,4 @@
-package com.example.emtlab.config;
+package com.example.emtlab.config.init;
 
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.Country;
@@ -10,7 +10,6 @@ import com.example.emtlab.repository.AccommodationRepository;
 import com.example.emtlab.repository.CountryRepository;
 import com.example.emtlab.repository.HostRepository;
 import com.example.emtlab.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

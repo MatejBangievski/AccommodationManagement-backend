@@ -2,7 +2,9 @@ package com.example.emtlab.service.application.impl;
 
 import com.example.emtlab.dto.CreateUserDto;
 import com.example.emtlab.dto.DisplayUserDto;
+import com.example.emtlab.dto.LoginResponseDto;
 import com.example.emtlab.dto.LoginUserDto;
+import com.example.emtlab.helpers.JwtHelper;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
 import com.example.emtlab.service.application.UserApplicationService;
@@ -16,9 +18,11 @@ import java.util.Optional;
 public class UserApplicationServiceImpl implements UserApplicationService {
 
     private final UserService userService;
+    private final JwtHelper jwtHelper;
 
-    public UserApplicationServiceImpl(UserService userService) {
+    public UserApplicationServiceImpl(UserService userService, JwtHelper jwtHelper) {
         this.userService = userService;
+        this.jwtHelper = jwtHelper;
     }
 
     @Override
@@ -35,11 +39,15 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     }
 
     @Override
-    public Optional<DisplayUserDto> login(LoginUserDto loginUserDto) {
-        return Optional.of(DisplayUserDto.from(userService.login(
+    public Optional<LoginResponseDto> login(LoginUserDto loginUserDto) {
+        User user = userService.login(
                 loginUserDto.username(),
                 loginUserDto.password()
-        )));
+        );
+
+        String token = jwtHelper.generateToken(user);
+
+        return Optional.of(new LoginResponseDto(token));
     }
 
     @Override

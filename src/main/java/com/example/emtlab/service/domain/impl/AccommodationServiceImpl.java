@@ -13,6 +13,8 @@ import com.example.emtlab.repository.AccommodationsPerHostViewRepository;
 import com.example.emtlab.repository.UserRepository;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.HostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,11 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public List<Accommodation> findAll() {
         return accommodationRepository.findAll();
+    }
+
+    @Override
+    public Page<Accommodation> findAll(Pageable pageable) {
+        return accommodationRepository.findAll(pageable);
     }
 
     @Override

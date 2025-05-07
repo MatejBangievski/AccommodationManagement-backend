@@ -1,14 +1,18 @@
-package com.example.emtlab.web;
+package com.example.emtlab.web.controllers;
 
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
+import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.model.views.AccommodationsPerHostView;
 import com.example.emtlab.service.application.AccommodationApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -27,6 +31,12 @@ public class AccommodationController {
     @GetMapping
     public List<DisplayAccommodationDto> findAll() {
         return accommodationApplicationService.findAll();
+    }
+
+    @Operation(summary = "Get all accommodations paginated", description = "Retrieves a list of all available accommodations with pagination.")
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<DisplayAccommodationDto>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(accommodationApplicationService.findAll(pageable));
     }
 
     @Operation(summary = "Get accommodation by ID", description = "Finds an accommodation by its ID.")
@@ -71,8 +81,9 @@ public class AccommodationController {
 
     @Operation(summary = "Reserve an accommodation", description = "Reserves an accommodation for the user.")
     @PostMapping("/{id}/reserve")
-    public ResponseEntity<DisplayAccommodationDto> reserveAccommodation(@PathVariable Long id, @RequestBody String username) {
-        return accommodationApplicationService.reserve(id, username)
+    public ResponseEntity<DisplayAccommodationDto> reserveAccommodation(@PathVariable Long id, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return accommodationApplicationService.reserve(id, user.getUsername())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -87,8 +98,9 @@ public class AccommodationController {
 
     @Operation(summary = "Book an accommodation", description = "Books an accommodation for the user.")
     @PostMapping("/{id}/book")
-    public ResponseEntity<DisplayAccommodationDto> bookAccommodation(@PathVariable Long id, @RequestBody String username) {
-        return accommodationApplicationService.book(id, username)
+    public ResponseEntity<DisplayAccommodationDto> bookAccommodation(@PathVariable Long id, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return accommodationApplicationService.book(id, user.getUsername())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -1,4 +1,4 @@
-package com.example.emtlab.config;
+package com.example.emtlab.security;
 
 import com.example.emtlab.service.domain.UserService;
 import org.springframework.security.authentication.AuthenticationProvider;

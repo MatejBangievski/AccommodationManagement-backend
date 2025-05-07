@@ -1,4 +1,4 @@
-package com.example.emtlab.web;
+package com.example.emtlab.web.controllers;
 
 import com.example.emtlab.dto.CreateCountryDto;
 import com.example.emtlab.dto.DisplayCountryDto;
