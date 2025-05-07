@@ -59,7 +59,7 @@ public class JwtSecurityWebConfig {
                                 .permitAll()
                                 .requestMatchers(
                                         "/api/accommodations/**",
-                                        "/api/countrie/**",
+                                        "/api/countries/**",
                                         "/api/hosts/**",
                                         "/api/user/**"
                                 )
