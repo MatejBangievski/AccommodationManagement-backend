@@ -1,5 +1,6 @@
 package com.example.emtlab.service.domain.impl;
 
+import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.exceptions.AccommodationAlreadyReservedException;
@@ -162,5 +163,13 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public List<AccommodationsPerHostView> getAccommodationsByHost() {
         return accommodationsPerHostViewRepository.findAll();
+    }
+
+    @Override
+    public Optional<DisplayAccommodationWithHostAndCountryDto> getAccommodationDetails(Long id) {
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Accommodation not found"));
+
+        return Optional.of(DisplayAccommodationWithHostAndCountryDto.from(accommodation));
     }
 }

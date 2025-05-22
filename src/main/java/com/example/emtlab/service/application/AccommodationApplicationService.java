@@ -1,7 +1,9 @@
 package com.example.emtlab.service.application;
 
+import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
+import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.model.views.AccommodationsPerHostView;
 import org.springframework.data.domain.Page;
@@ -36,4 +38,6 @@ public interface AccommodationApplicationService {
     void refreshMaterializedView();
 
     List<AccommodationsPerHostView> getAccommodationsByHost();
+
+    Optional<DisplayAccommodationWithHostAndCountryDto> getAccommodationDetails(Long id);
 }

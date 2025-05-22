@@ -1,5 +1,6 @@
 package com.example.emtlab.service.domain;
 
+import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.model.views.AccommodationsPerHostView;
@@ -34,4 +35,6 @@ public interface AccommodationService {
     void refreshMaterializedView();
 
     List<AccommodationsPerHostView> getAccommodationsByHost();
+
+    Optional<DisplayAccommodationWithHostAndCountryDto> getAccommodationDetails(Long id);
 }

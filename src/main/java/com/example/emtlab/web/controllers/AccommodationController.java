@@ -1,5 +1,6 @@
 package com.example.emtlab.web.controllers;
 
+import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
 import com.example.emtlab.model.domain.User;
@@ -130,5 +131,13 @@ public class AccommodationController {
     public ResponseEntity<Void> refreshMaterializedView() {
         accommodationApplicationService.refreshMaterializedView();
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Fetches an accommodation", description = "sadasd")
+    @GetMapping("/{id}/details")
+    public ResponseEntity<DisplayAccommodationWithHostAndCountryDto> fetchAccommodation(@PathVariable Long id) {
+        return accommodationApplicationService.getAccommodationDetails(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

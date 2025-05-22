@@ -13,4 +13,5 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     @Query(value = "SELECT category as category, count(*) as count FROM accommodation GROUP BY category", nativeQuery = true)
     List<AccommodationProjection> takeCategoryAndCountByProjection();
+
 }

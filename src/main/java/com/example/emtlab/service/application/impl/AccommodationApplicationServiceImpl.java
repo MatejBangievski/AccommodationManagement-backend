@@ -1,5 +1,6 @@
 package com.example.emtlab.service.application.impl;
 
+import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.dto.CreateAccommodationDto;
 import com.example.emtlab.dto.DisplayAccommodationDto;
 import com.example.emtlab.model.domain.Accommodation;
@@ -108,5 +109,8 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
         return accommodationsByHost;
     }
 
-
+    @Override
+    public Optional<DisplayAccommodationWithHostAndCountryDto> getAccommodationDetails(Long id) {
+        return accommodationService.getAccommodationDetails(id);
+    }
 }
