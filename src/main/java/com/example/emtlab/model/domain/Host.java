@@ -13,6 +13,7 @@ public class Host {
     private String name;
 
     private String surname;
+
     @ManyToOne
     private Country country;
 

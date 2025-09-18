@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, String> {
 
     @EntityGraph(
-        type = EntityGraph.EntityGraphType.LOAD,
+        type = EntityGraph.EntityGraphType.FETCH,
             attributePaths = {}
     )
     @Query("SELECT u FROM User u")
