@@ -1,9 +1,6 @@
 package com.example.emtlab.web.controllers;
 
-import com.example.emtlab.dto.CreateUserDto;
-import com.example.emtlab.dto.DisplayUserDto;
-import com.example.emtlab.dto.LoginResponseDto;
-import com.example.emtlab.dto.LoginUserDto;
+import com.example.emtlab.dto.*;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.exceptions.InvalidArgumentsException;
@@ -81,6 +78,19 @@ public class UserController {
     @GetMapping("/{username}")
     public ResponseEntity<DisplayUserDto> findByUsername(@PathVariable String username) {
         return userApplicationService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @Operation(summary = "Find where a user is staying by username", description = "Returns accommodation details by username")
+    @ApiResponses(
+            value = {@ApiResponse(
+                    responseCode = "200",
+                    description = "Accommodation found"
+            ), @ApiResponse(responseCode = "404", description = "Invalid username or he's not staying anywhere")}
+    )    @GetMapping("/findStayingAccommodation/{username}")
+    public ResponseEntity<DisplayAccommodationDto> findStayingAccommodation(@PathVariable String username) {
+        return userApplicationService.findWhereIsStaying(username)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

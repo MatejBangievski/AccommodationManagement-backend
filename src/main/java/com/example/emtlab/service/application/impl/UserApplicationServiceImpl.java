@@ -1,9 +1,6 @@
 package com.example.emtlab.service.application.impl;
 
-import com.example.emtlab.dto.CreateUserDto;
-import com.example.emtlab.dto.DisplayUserDto;
-import com.example.emtlab.dto.LoginResponseDto;
-import com.example.emtlab.dto.LoginUserDto;
+import com.example.emtlab.dto.*;
 import com.example.emtlab.helpers.JwtHelper;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
@@ -76,6 +73,12 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     @Override
     public List<Accommodation> findAllReservations(String username) {
         return userService.findAllReservations(username);
+    }
+
+    @Override
+    public Optional<DisplayAccommodationDto> findWhereIsStaying(String username) {
+        return userService.findWhereIsStaying(username)
+                .map(DisplayAccommodationDto::from);
     }
 
     @Override

@@ -128,8 +128,9 @@ public class AccommodationServiceImpl implements AccommodationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if (accommodation.isReserved() && accommodation.getUserStaying() != null && accommodation.getUserStaying().equals(user)) {
+        if (accommodation.isReserved() && accommodation.getUserStaying() != null && accommodation.getUserStaying().equals(user) && !accommodation.isBooked()) {
             accommodation.setBooked(true);
+            accommodation.setReserved(false);
 
             return Optional.of(accommodationRepository.save(accommodation));
         } else throw new AccommodationAlreadyReservedException(accommodation.getName());
@@ -143,7 +144,6 @@ public class AccommodationServiceImpl implements AccommodationService {
             throw new AccommodationNotBookedException(accommodation.getName());
         }
 
-        accommodation.setBooked(false);
         accommodation.setBooked(false);
         accommodation.setUserStaying(null);
 
