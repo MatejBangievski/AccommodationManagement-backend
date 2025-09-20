@@ -6,11 +6,13 @@ import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.exceptions.InvalidArgumentsException;
 import com.example.emtlab.model.exceptions.InvalidUserCredentialsException;
 import com.example.emtlab.model.exceptions.PasswordsDoNotMatchException;
+import com.example.emtlab.model.exceptions.UsernameAlreadyExistsException;
 import com.example.emtlab.service.application.UserApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +32,11 @@ public class UserController {
 
     @Operation(summary = "Register a new user", description = "Creates a new user account")
     @ApiResponses(
-            value = {@ApiResponse(
-                    responseCode = "200",
-                    description = "User registered successfully"
-            ), @ApiResponse(
-                    responseCode = "400", description = "Invalid input or passwords do not match"
-            )}
+            value = {
+                    @ApiResponse(responseCode = "200", description = "User registered successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid input or passwords do not match"),
+                    @ApiResponse(responseCode = "409", description = "Username already exists")
+            }
     )
     @PostMapping("/register")
     public ResponseEntity<DisplayUserDto> register(@RequestBody CreateUserDto createUserDto) {
@@ -43,10 +44,13 @@ public class UserController {
             return userApplicationService.register(createUserDto)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
-        } catch (InvalidArgumentsException | PasswordsDoNotMatchException exception) {
-            return ResponseEntity.badRequest().build();
+        } catch (InvalidArgumentsException | PasswordsDoNotMatchException e) {
+            return ResponseEntity.badRequest().build(); // 400
+        } catch (UsernameAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build(); // 409
         }
     }
+
 
     @Operation(summary = "User login", description = "Authenticates a user and generates a JWT")
     @ApiResponses(
