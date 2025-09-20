@@ -3,11 +3,7 @@ package com.example.emtlab.service.domain.impl;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
 import com.example.emtlab.model.enumerations.Role;
-import com.example.emtlab.model.exceptions.InvalidArgumentsException;
-import com.example.emtlab.model.exceptions.InvalidUsernameOrPasswordException;
-import com.example.emtlab.model.exceptions.PasswordsDoNotMatchException;
-import com.example.emtlab.model.exceptions.UsernameAlreadyExistsException;
-import com.example.emtlab.model.exceptions.InvalidUserCredentialsException;
+import com.example.emtlab.model.exceptions.*;
 import com.example.emtlab.repository.UserRepository;
 import com.example.emtlab.service.domain.AccommodationService;
 import com.example.emtlab.service.domain.UserService;
@@ -79,20 +75,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Accommodation> findAllReservations(String username) {
-         User user = findByUsername(username);
+    public User completeStay(Long accommodationId) {
 
-         return user.getAccommodationReservations().stream().collect(Collectors.toList());
+        User user = accommodationService.findById(accommodationId)
+                .get().getUserStaying();
+
+        try {
+            accommodationService.completeStay(accommodationId);
+        } catch (AccommodationNotBookedException e) {
+            throw new RuntimeException("Accommodation not booked", e);
+        }
+
+        return user;
     }
 
     @Override
-    public Optional<Accommodation> findWhereIsStaying(String username) {
+    public List<Accommodation> findAllReservations(String username) {
+        User user = findByUsername(username);
+
+        return user.getAccommodationReservations().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Accommodation> findAllBookings(String username) {
         User user = findByUsername(username);
 
         return accommodationService.findAll()
                 .stream()
                 .filter(a -> a.getUserStaying() != null && a.getUserStaying().equals(user))
-                .findFirst();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -107,6 +118,34 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public User reserveAllAccommodations(String username) {
+        List<Accommodation> freeAccommodations = accommodationService.findAllNonReserved();
+
+        freeAccommodations
+                .forEach(a -> reserveAccommodation(username, a.getId()));
+
+        return findByUsername(username);
+    }
+
+    @Override
+    public User cancelAllReservations(String username) {
+
+        findAllReservations(username)
+                .forEach(a -> cancelAccommodation(username, a.getId()));
+
+        return findByUsername(username);
+    }
+
+    @Override
+    public User completeStayForAllBookings(String username) {
+
+        findAllBookings(username)
+                .forEach(a -> completeStay(a.getId()));
+
+        return findByUsername(username);
     }
 
     @Override

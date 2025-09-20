@@ -43,6 +43,13 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
+    public List<Accommodation> findAllNonReserved() {
+        return findAll().stream()
+                .filter(a -> !a.isReserved())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Page<Accommodation> findAll(Pageable pageable) {
         return accommodationRepository.findAll(pageable);
     }
@@ -59,8 +66,8 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         if (accommodation.getHost() != null &&
                 hostService.findById(accommodation.getHost().getId()).isPresent()) {
-                savedAccommodation = Optional.of(accommodationRepository.save(
-                        new Accommodation(accommodation.getName(), accommodation.getCategory(),
+            savedAccommodation = Optional.of(accommodationRepository.save(
+                    new Accommodation(accommodation.getName(), accommodation.getCategory(),
                             hostService.findById(accommodation.getHost().getId()).get(),
                             accommodation.getNumRooms()
                     )));
@@ -72,21 +79,21 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Override
     public Optional<Accommodation> update(Long id, Accommodation accommodation) {
         return accommodationRepository.findById(id).map(existingAccommodation -> {
-                    if (accommodation.getName() != null) {
-                        existingAccommodation.setName(accommodation.getName());
-                    }
-                    if (accommodation.getCategory() != null) {
-                        existingAccommodation.setCategory(accommodation.getCategory());
-                    }
-                    if (accommodation.getHost() != null && hostService.findById(accommodation.getHost().getId()).isPresent()) {
-                        existingAccommodation.setHost(hostService.findById(accommodation.getHost().getId()).get());
-                    }
-                    if (accommodation.getNumRooms() != null) {
-                        existingAccommodation.setNumRooms(accommodation.getNumRooms());
-                    }
-                    Accommodation updatedAccommodation = accommodationRepository.save(existingAccommodation);
-                    return updatedAccommodation;
-                });
+            if (accommodation.getName() != null) {
+                existingAccommodation.setName(accommodation.getName());
+            }
+            if (accommodation.getCategory() != null) {
+                existingAccommodation.setCategory(accommodation.getCategory());
+            }
+            if (accommodation.getHost() != null && hostService.findById(accommodation.getHost().getId()).isPresent()) {
+                existingAccommodation.setHost(hostService.findById(accommodation.getHost().getId()).get());
+            }
+            if (accommodation.getNumRooms() != null) {
+                existingAccommodation.setNumRooms(accommodation.getNumRooms());
+            }
+            Accommodation updatedAccommodation = accommodationRepository.save(existingAccommodation);
+            return updatedAccommodation;
+        });
     }
 
     @Override

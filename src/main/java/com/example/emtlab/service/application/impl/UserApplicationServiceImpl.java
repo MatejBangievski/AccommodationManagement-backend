@@ -71,19 +71,46 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     }
 
     @Override
+    public Optional<DisplayUserDto> completeStay(Long accommodationId) {
+        User user = userService.completeStay(accommodationId);
+        return Optional.of(DisplayUserDto.from(user));
+    }
+
+    @Override
     public List<Accommodation> findAllReservations(String username) {
         return userService.findAllReservations(username);
     }
 
+
     @Override
-    public Optional<DisplayAccommodationDto> findWhereIsStaying(String username) {
-        return userService.findWhereIsStaying(username)
-                .map(DisplayAccommodationDto::from);
+    public List<DisplayAccommodationDto> findAllBookings(String username) {
+        return userService.findAllBookings(username)
+                .stream()
+                .map(DisplayAccommodationDto::from)
+                .toList();
     }
 
     @Override
     public Optional<DisplayUserDto> bookAllReservations(String username) {
         User user = userService.bookAllReservations(username);
+        return Optional.of(DisplayUserDto.from(user));
+    }
+
+    @Override
+    public Optional<DisplayUserDto> cancelAllReservations(String username) {
+        User user = userService.cancelAllReservations(username);
+        return Optional.of(DisplayUserDto.from(user));
+    }
+
+    @Override
+    public Optional<DisplayUserDto> reserveAllAccommodations(String username) {
+        User user = userService.reserveAllAccommodations(username);
+        return Optional.of(DisplayUserDto.from(user));
+    }
+
+    @Override
+    public Optional<DisplayUserDto> completeStayForAllBookings(String username) {
+        User user = userService.completeStayForAllBookings(username);
         return Optional.of(DisplayUserDto.from(user));
     }
 

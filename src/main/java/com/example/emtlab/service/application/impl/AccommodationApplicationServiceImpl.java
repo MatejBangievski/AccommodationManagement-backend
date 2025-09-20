@@ -34,6 +34,11 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     }
 
     @Override
+    public List<DisplayAccommodationDto> findAllNonReserved() {
+        return accommodationService.findAllNonReserved().stream().map(DisplayAccommodationDto::from).toList();
+    }
+
+    @Override
     public Page<DisplayAccommodationDto> findAll(Pageable pageable) {
         return accommodationService.findAll(pageable)
                 .map(DisplayAccommodationDto::from);

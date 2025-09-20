@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface AccommodationApplicationService {
     List<DisplayAccommodationDto> findAll();
 
+    List<DisplayAccommodationDto> findAllNonReserved();
+
     Page<DisplayAccommodationDto> findAll(Pageable pageable);
 
     Optional<DisplayAccommodationDto> findById(Long id);

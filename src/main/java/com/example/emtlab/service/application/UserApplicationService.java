@@ -15,17 +15,25 @@ public interface UserApplicationService {
 
     Optional<DisplayUserDto> findByUsername(String username);
 
-    Optional<DisplayUserDto> reserveAccommodation (String username, Long accommodationId);
+    Optional<DisplayUserDto> reserveAccommodation(String username, Long accommodationId);
 
-    Optional<DisplayUserDto> cancelAccommodation (String username, Long accommodationId);
+    Optional<DisplayUserDto> cancelAccommodation(String username, Long accommodationId);
 
-    Optional<DisplayUserDto> bookAccommodation (String username, Long accommodationId);
+    Optional<DisplayUserDto> bookAccommodation(String username, Long accommodationId);
+
+    Optional<DisplayUserDto> completeStay(Long accommodationId);
 
     List<Accommodation> findAllReservations(String username);
 
-    Optional<DisplayAccommodationDto> findWhereIsStaying (String username);
+    List<DisplayAccommodationDto> findAllBookings(String username);
 
     Optional<DisplayUserDto> bookAllReservations(String username);
+
+    Optional<DisplayUserDto> cancelAllReservations(String username);
+
+    Optional<DisplayUserDto> reserveAllAccommodations(String username);
+
+    Optional<DisplayUserDto> completeStayForAllBookings(String username);
 
     List<User> getAllUsers();
 }

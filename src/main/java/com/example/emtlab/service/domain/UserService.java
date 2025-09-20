@@ -16,17 +16,25 @@ public interface UserService extends UserDetailsService {
 
     User findByUsername(String username);
 
-    User reserveAccommodation (String username, Long accommodationId);
+    User reserveAccommodation(String username, Long accommodationId);
 
-    User cancelAccommodation (String username, Long accommodationId);
+    User cancelAccommodation(String username, Long accommodationId);
 
-    User bookAccommodation (String username, Long accommodationId);
+    User bookAccommodation(String username, Long accommodationId);
+
+    User completeStay(Long accommodationId);
 
     List<Accommodation> findAllReservations(String username);
 
-    Optional<Accommodation> findWhereIsStaying (String username);
+    List<Accommodation> findAllBookings(String username);
 
     User bookAllReservations(String username);
+
+    User reserveAllAccommodations(String username);
+
+    User cancelAllReservations(String username);
+
+    User completeStayForAllBookings(String username);
 
     List<User> getAllUsers();
 }
