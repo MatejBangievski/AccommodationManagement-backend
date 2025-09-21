@@ -24,9 +24,14 @@ public class Accommodation {
     private Integer numRooms;
 
     @ManyToOne
-    @JoinColumn(name = "user_staying_id", referencedColumnName = "username")
+    @JoinColumn(name = "user_reserved_id", referencedColumnName = "username")
     @JsonIgnore
-    private User userStaying = null;
+    private User userReserved = null;
+
+    @ManyToOne
+    @JoinColumn(name = "user_booked_id", referencedColumnName = "username")
+    @JsonIgnore
+    private User userBooked = null;
 
     @Column(name = "is_accommodation_reserved")
     private boolean isReserved = false;

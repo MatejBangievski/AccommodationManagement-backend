@@ -27,9 +27,13 @@ public class User implements UserDetails {
 
     private String surname;
 
-    @OneToMany(mappedBy = "userStaying")
+    @OneToMany(mappedBy = "userReserved")
     @JsonIgnore
-    private List<Accommodation> accommodationReservations;
+    private List<Accommodation> accommodationsReserved;
+
+    @OneToMany(mappedBy = "userBooked")
+    @JsonIgnore
+    private List<Accommodation> accommodationsBooked;
 
     private boolean isAccountNonExpired = true;
     private boolean isAccountNonLocked = true;
@@ -49,7 +53,8 @@ public class User implements UserDetails {
         this.surname = surname;
         this.role = role;
 
-        accommodationReservations = new ArrayList<>();
+        accommodationsReserved = new ArrayList<>();
+        accommodationsBooked = new ArrayList<>();
     }
 
     public User(String username, String password, String name, String surname) {
@@ -59,7 +64,8 @@ public class User implements UserDetails {
         this.surname = surname;
         this.role = Role.ROLE_USER;
 
-        accommodationReservations = new ArrayList<>();
+        accommodationsReserved = new ArrayList<>();
+        accommodationsBooked = new ArrayList<>();
     }
 
     public User(UserDetails userDetails) {
@@ -92,11 +98,19 @@ public class User implements UserDetails {
         return isEnabled;
     }
 
-    public void addReservation (Accommodation accommodation) {
-        accommodationReservations.add(accommodation);
+    public void addReservation(Accommodation accommodation) {
+        accommodationsReserved.add(accommodation);
     }
 
-    public void removeReservation (Accommodation accommodation) {
-        accommodationReservations.remove(accommodation);
+    public void removeReservation(Accommodation accommodation) {
+        accommodationsReserved.remove(accommodation);
+    }
+
+    public void addBooking(Accommodation accommodation) {
+        accommodationsBooked.add(accommodation);
+    }
+
+    public void removeBooking(Accommodation accommodation) {
+        accommodationsBooked.remove(accommodation);
     }
 }

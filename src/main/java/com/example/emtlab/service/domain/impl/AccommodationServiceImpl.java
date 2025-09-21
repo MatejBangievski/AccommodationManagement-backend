@@ -3,10 +3,7 @@ package com.example.emtlab.service.domain.impl;
 import com.example.emtlab.dto.DisplayAccommodationWithHostAndCountryDto;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
-import com.example.emtlab.model.exceptions.AccommodationAlreadyReservedException;
-import com.example.emtlab.model.exceptions.AccommodationNotBookedException;
-import com.example.emtlab.model.exceptions.AccommodationNotReservedException;
-import com.example.emtlab.model.exceptions.UserNotFoundException;
+import com.example.emtlab.model.exceptions.*;
 import com.example.emtlab.model.projections.AccommodationProjection;
 import com.example.emtlab.model.views.AccommodationsPerHostView;
 import com.example.emtlab.repository.AccommodationRepository;
@@ -109,7 +106,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         if (!accommodation.isReserved()) {
             accommodation.setReserved(true);
-            accommodation.setUserStaying(user);
+            accommodation.setUserReserved(user);
 
             return Optional.of(accommodationRepository.save(accommodation));
         } else throw new AccommodationAlreadyReservedException(accommodation.getName());
@@ -124,7 +121,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
 
         accommodation.setReserved(false);
-        accommodation.setUserStaying(null);
+        accommodation.setUserReserved(null);
 
         return Optional.of(accommodationRepository.save(accommodation));
     }
@@ -135,12 +132,17 @@ public class AccommodationServiceImpl implements AccommodationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if (accommodation.isReserved() && accommodation.getUserStaying() != null && accommodation.getUserStaying().equals(user) && !accommodation.isBooked()) {
+        if (accommodation.isReserved() && accommodation.getUserReserved().equals(user)
+                && !accommodation.isBooked()) {
+
             accommodation.setBooked(true);
+            accommodation.setUserBooked(user);
+
             accommodation.setReserved(false);
+            accommodation.setUserReserved(null);
 
             return Optional.of(accommodationRepository.save(accommodation));
-        } else throw new AccommodationAlreadyReservedException(accommodation.getName());
+        } else throw new AccommodationAlreadyBookedException(accommodation.getName());
     }
 
     @Override
@@ -152,7 +154,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
 
         accommodation.setBooked(false);
-        accommodation.setUserStaying(null);
+        accommodation.setUserBooked(null);
 
         return Optional.of(accommodationRepository.save(accommodation));
     }

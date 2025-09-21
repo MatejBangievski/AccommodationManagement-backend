@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,51 +70,56 @@ public class UserServiceImpl implements UserService {
         Accommodation accommodation = accommodationService.findById(accommodationId).get();
         accommodationService.book(accommodationId, username);
 
+        user.addBooking(accommodation);
         user.removeReservation(accommodation);
         return userRepository.save(user);
     }
 
     @Override
     public User completeStay(Long accommodationId) {
+        Accommodation accommodation = accommodationService.findById(accommodationId).get();
+        User user = accommodation.getUserBooked();
 
-        User user = accommodationService.findById(accommodationId)
-                .get().getUserStaying();
 
         try {
             accommodationService.completeStay(accommodationId);
+            user.removeBooking(accommodation);
         } catch (AccommodationNotBookedException e) {
             throw new RuntimeException("Accommodation not booked", e);
         }
 
-        return user;
+        return userRepository.save(user);
     }
 
     @Override
     public List<Accommodation> findAllReservations(String username) {
         User user = findByUsername(username);
 
-        return user.getAccommodationReservations().stream().collect(Collectors.toList());
+        return user.getAccommodationsReserved();
     }
 
     @Override
     public List<Accommodation> findAllBookings(String username) {
         User user = findByUsername(username);
 
-        return accommodationService.findAll()
-                .stream()
-                .filter(a -> a.getUserStaying() != null && a.getUserStaying().equals(user))
-                .collect(Collectors.toList());
+        return user.getAccommodationsBooked();
     }
 
     @Override
     public User bookAllReservations(String username) {
         User user = findByUsername(username);
 
-        List<Accommodation> reservations = user.getAccommodationReservations().stream().collect(Collectors.toList());
+        List<Accommodation> reservations = findAllReservations(username);
 
-        for (Accommodation acc : reservations) {
-            accommodationService.book(acc.getId(), username);
-            user.removeReservation(acc);
+        for (Accommodation acc : new ArrayList<>(reservations)) {
+           try {
+               accommodationService.book(acc.getId(), username);
+               user.addBooking(acc);
+               user.removeReservation(acc);
+           } catch (AccommodationAlreadyBookedException e) {
+               //nothing
+           }
+
         }
 
         return userRepository.save(user);
@@ -124,27 +129,32 @@ public class UserServiceImpl implements UserService {
     public User reserveAllAccommodations(String username) {
         List<Accommodation> freeAccommodations = accommodationService.findAllNonReserved();
 
-        freeAccommodations
-                .forEach(a -> reserveAccommodation(username, a.getId()));
+        for (Accommodation a : new ArrayList<>(freeAccommodations)) {
+            try {
+                reserveAccommodation(username, a.getId());
+            } catch (AccommodationAlreadyBookedException e) {
+                // Skip booked ones and continue with the rest
+            }
+        }
 
         return findByUsername(username);
     }
 
     @Override
     public User cancelAllReservations(String username) {
-
-        findAllReservations(username)
-                .forEach(a -> cancelAccommodation(username, a.getId()));
-
+        List<Accommodation> reservations = findAllReservations(username);
+        for (Accommodation a : new ArrayList<>(reservations)) {
+            cancelAccommodation(username, a.getId());
+        }
         return findByUsername(username);
     }
 
     @Override
     public User completeStayForAllBookings(String username) {
-
-        findAllBookings(username)
-                .forEach(a -> completeStay(a.getId()));
-
+        List<Accommodation> bookings = findAllBookings(username);
+        for (Accommodation a : new ArrayList<>(bookings)) {
+            completeStay(a.getId());
+        }
         return findByUsername(username);
     }
 

@@ -37,7 +37,8 @@ create table accommodation
     category                        varchar(255),
     host_id                         bigint references host,
     num_rooms                       integer,
-    user_staying_id                 varchar(255) references accommodation_users,
+    user_reserved_id                 varchar(255) references accommodation_users,
+    user_booked_id                 varchar(255) references accommodation_users,
     is_accommodation_reserved       boolean default false,
     is_accommodation_booked         boolean default false
 );

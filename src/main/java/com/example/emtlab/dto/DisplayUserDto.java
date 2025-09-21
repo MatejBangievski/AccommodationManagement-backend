@@ -11,7 +11,8 @@ public record DisplayUserDto(
         String name,
         String surname,
         Role role,
-        List<Accommodation> reservations
+        List<Accommodation> reservations,
+        List<Accommodation> bookings
 ) {
 
     public static DisplayUserDto from(User user) {
@@ -20,7 +21,8 @@ public record DisplayUserDto(
                 user.getName(),
                 user.getSurname(),
                 user.getRole(),
-                user.getAccommodationReservations()
+                user.getAccommodationsReserved(),
+                user.getAccommodationsBooked()
         );
     }
 

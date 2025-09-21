@@ -13,7 +13,8 @@ public record DisplayAccommodationWithHostAndCountryDto(
         Integer numRooms,
         boolean isReserved,
         boolean isBooked,
-        User user,
+        User userReserved,
+        User userBooked,
         Host host,
         Country country
 ) {
@@ -25,7 +26,8 @@ public record DisplayAccommodationWithHostAndCountryDto(
                 accommodation.getNumRooms(),
                 accommodation.isReserved(),
                 accommodation.isBooked(),
-                accommodation.getUserStaying(),
+                accommodation.getUserReserved(),
+                accommodation.getUserBooked(),
                 accommodation.getHost(),
                 accommodation.getHost().getCountry()
         );

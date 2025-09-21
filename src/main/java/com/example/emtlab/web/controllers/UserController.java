@@ -118,9 +118,13 @@ public class UserController {
 //    public ResponseEntity<List<Accommodation>> findAllReservations(Authentication authentication) {
 //        User user = (User) authentication.getPrincipal();
     public ResponseEntity<List<Accommodation>> findAllReservations(@PathVariable String username) {
-        List<Accommodation> accommodations = userApplicationService.findAllReservations(username);
-        return accommodations.isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(accommodations);
+        try {
+            List<Accommodation> accommodations = userApplicationService.findAllReservations(username);
+            return ResponseEntity.ok(accommodations); // even if empty, returns 200
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+        }
     }
 
     @Operation(summary = "Find where a user is staying by username", description = "Returns accommodation details by username")
@@ -132,10 +136,13 @@ public class UserController {
     )
     @GetMapping("/findAllBookings/{username}")
     public ResponseEntity<List<DisplayAccommodationDto>> findAllBookings(@PathVariable String username) {
-        List<DisplayAccommodationDto> accommodationDtos = userApplicationService.findAllBookings(username);
-
-        return accommodationDtos.isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(accommodationDtos);
+        try {
+            List<DisplayAccommodationDto> accommodations = userApplicationService.findAllBookings(username);
+            return ResponseEntity.ok(accommodations); // even if empty, returns 200
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+        }
     }
 
     @Operation(summary = "Book all reservations", description = "Books all reservations for the user")
@@ -203,8 +210,12 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "List fetched successfully")
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userApplicationService.getAllUsers();
-        return users.isEmpty() ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(users);
+        try {
+            List<User> users = userApplicationService.getAllUsers();
+            return ResponseEntity.ok(users); // even if empty, returns 200
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+        }
     }
 }
