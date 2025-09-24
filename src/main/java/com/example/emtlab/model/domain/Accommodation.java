@@ -4,9 +4,13 @@ import com.example.emtlab.model.enumerations.AccommodationCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"host", "userReserved", "userBooked"})
 public class Accommodation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

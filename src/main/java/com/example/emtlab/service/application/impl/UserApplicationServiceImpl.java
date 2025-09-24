@@ -118,4 +118,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
+
+    @Override
+    public void deleteByUsername(String username) {
+        userService.deleteByUsername(username);
+    }
 }

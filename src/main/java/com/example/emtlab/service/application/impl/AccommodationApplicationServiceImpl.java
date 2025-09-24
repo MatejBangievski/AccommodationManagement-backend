@@ -53,7 +53,7 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     public Optional<DisplayAccommodationDto> save(CreateAccommodationDto createAccommodationDto) {
         Optional<Host> host = hostService.findById(createAccommodationDto.hostId());
 
-        if (host.isPresent()) {
+        if (host.isPresent() && createAccommodationDto.numRooms() != null && createAccommodationDto.category() != null) {
             return accommodationService.save(createAccommodationDto.toAccommodation(host.get())).map(DisplayAccommodationDto::from);
         }
         return Optional.empty();

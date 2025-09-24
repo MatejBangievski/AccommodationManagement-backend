@@ -124,6 +124,12 @@ public class AccommodationController {
     @Operation(summary = "Fetches an accommodation", description = "sadasd")
     @GetMapping("/{id}/details")
     public ResponseEntity<DisplayAccommodationWithHostAndCountryDto> fetchAccommodation(@PathVariable Long id) {
-        return accommodationApplicationService.getAccommodationDetails(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+//        return accommodationApplicationService.getAccommodationDetails(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            DisplayAccommodationWithHostAndCountryDto dto = accommodationApplicationService.getAccommodationDetails(id).get();
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) { // or a custom NotFoundException
+            return ResponseEntity.notFound().build();
+        }
     }
 }

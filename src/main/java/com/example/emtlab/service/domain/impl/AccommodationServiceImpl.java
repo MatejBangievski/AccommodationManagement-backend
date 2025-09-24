@@ -132,7 +132,8 @@ public class AccommodationServiceImpl implements AccommodationService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if (accommodation.isReserved() && accommodation.getUserReserved().equals(user)
+        if (accommodation.isReserved()
+                && accommodation.getUserReserved().getUsername().equals(username)
                 && !accommodation.isBooked()) {
 
             accommodation.setBooked(true);

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -164,6 +165,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteByUsername(String username) {
+        userRepository.deleteById(username);
+    }
+
+    @Override
     public User register(
             String username,
             String password,
@@ -194,4 +200,5 @@ public class UserServiceImpl implements UserService {
 
         return user;
     }
+
 }

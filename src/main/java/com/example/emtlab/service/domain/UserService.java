@@ -6,7 +6,6 @@ import com.example.emtlab.model.enumerations.Role;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
 
@@ -37,4 +36,9 @@ public interface UserService extends UserDetailsService {
     User completeStayForAllBookings(String username);
 
     List<User> getAllUsers();
+
+    void deleteByUsername(String username);
 }
+
+
+

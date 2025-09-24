@@ -36,5 +36,7 @@ public interface UserApplicationService {
     Optional<DisplayUserDto> completeStayForAllBookings(String username);
 
     List<User> getAllUsers();
+
+    void deleteByUsername(String username);
 }
 

@@ -10,8 +10,10 @@ import java.util.List;
 
 @Repository
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
-
-    @Query(value = "SELECT category as category, count(*) as count FROM accommodation GROUP BY category", nativeQuery = true)
+    @Query("SELECT a.category AS category, COUNT(a) AS count FROM Accommodation a GROUP BY a.category")
     List<AccommodationProjection> takeCategoryAndCountByProjection();
+
+//    @Query(value = "SELECT category as category, count(*) as count FROM accommodation GROUP BY category", nativeQuery = true)
+//    List<AccommodationProjection> takeCategoryAndCountByProjection();
 
 }
