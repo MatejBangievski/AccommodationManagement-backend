@@ -20,6 +20,8 @@ public interface HostApplicationService {
 
     void deleteById(Long id);
 
+    void deleteAll();
+
     List<HostsPerCountryView> getHostsPerCountry();
 
     List<HostProjection> getNameAndSurname();

@@ -25,6 +25,8 @@ public interface AccommodationService {
 
     void deleteById(Long id);
 
+    void deleteAll();
+
     Optional<Accommodation> reserve(Long id, String username);
 
     Optional<Accommodation> removeReservation(Long id);
@@ -41,3 +43,5 @@ public interface AccommodationService {
 
     Optional<DisplayAccommodationWithHostAndCountryDto> getAccommodationDetails(Long id);
 }
+
+

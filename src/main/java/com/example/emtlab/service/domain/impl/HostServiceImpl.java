@@ -85,6 +85,11 @@ public class HostServiceImpl implements HostService {
     }
 
     @Override
+    public void deleteAll() {
+        hostRepository.deleteAll();
+    }
+
+    @Override
     public void refreshMaterializedView() {
         hostsPerCountryViewRepostiory.refreshMaterializedView();
     }

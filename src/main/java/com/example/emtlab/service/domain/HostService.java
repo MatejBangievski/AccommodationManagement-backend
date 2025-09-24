@@ -18,6 +18,8 @@ public interface HostService {
 
     void deleteById(Long id);
 
+    void deleteAll();
+
     void refreshMaterializedView();
 
     List<HostsPerCountryView> getHostsPerCountry();

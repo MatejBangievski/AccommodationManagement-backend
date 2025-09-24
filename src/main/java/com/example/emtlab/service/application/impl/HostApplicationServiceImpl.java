@@ -60,6 +60,11 @@ public class HostApplicationServiceImpl implements HostApplicationService {
     }
 
     @Override
+    public void deleteAll() {
+        hostService.deleteAll();
+    }
+
+    @Override
     public List<HostsPerCountryView> getHostsPerCountry() {
         return hostService.getHostsPerCountry();
     }

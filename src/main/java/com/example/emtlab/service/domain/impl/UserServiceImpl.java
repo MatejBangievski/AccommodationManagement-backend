@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
             accommodationService.completeStay(accommodationId);
             user.removeBooking(accommodation);
         } catch (AccommodationNotBookedException e) {
-            throw new RuntimeException("Accommodation not booked", e);
+            throw new AccommodationNotBookedException(accommodation.getName());
         }
 
         return userRepository.save(user);
@@ -167,6 +167,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUsername(String username) {
         userRepository.deleteById(username);
+    }
+
+    @Override
+    public void deleteAll() {
+        userRepository.deleteAll();
     }
 
     @Override

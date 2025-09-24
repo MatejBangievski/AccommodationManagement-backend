@@ -27,6 +27,8 @@ public interface AccommodationApplicationService {
 
     void deleteById(Long id);
 
+    void deleteAll();
+
     Optional<DisplayAccommodationDto> reserve(Long id, String username);
 
     Optional<DisplayAccommodationDto> removeReservation(Long id);

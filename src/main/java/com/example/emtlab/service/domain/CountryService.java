@@ -16,4 +16,6 @@ public interface CountryService {
 
     void deleteById(Long id);
 
+    void deleteAll();
+
 }

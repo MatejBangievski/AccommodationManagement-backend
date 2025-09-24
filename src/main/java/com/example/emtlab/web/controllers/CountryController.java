@@ -39,9 +39,15 @@ public class CountryController {
     @Operation(summary = "Add a new country", description = "Creates a new country.")
     @PostMapping("/add")
     public ResponseEntity<DisplayCountryDto> save(@RequestBody CreateCountryDto createCountryDto) {
-        return countryApplicationService.save(createCountryDto)
-                .map(country -> ResponseEntity.ok().body(country))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return countryApplicationService.save(createCountryDto)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @Operation(summary = "Update an existing country", description = "Updates a country by ID.")

@@ -75,6 +75,11 @@ public class AccommodationApplicationServiceImpl implements AccommodationApplica
     }
 
     @Override
+    public void deleteAll() {
+        accommodationService.deleteAll();
+    }
+
+    @Override
     public Optional<DisplayAccommodationDto> reserve(Long id, String username) {
         Optional<Accommodation> reservedAccommodation = accommodationService.reserve(id, username);
         return reservedAccommodation.map(DisplayAccommodationDto::from);

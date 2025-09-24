@@ -49,4 +49,11 @@ public class CountryServiceImpl implements CountryService {
     public void deleteById(Long id) {
         countryRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteAll() {
+        countryRepository.deleteAll();
+    }
+
+
 }

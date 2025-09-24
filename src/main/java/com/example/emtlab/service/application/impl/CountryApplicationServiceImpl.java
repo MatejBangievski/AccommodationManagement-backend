@@ -29,8 +29,15 @@ public class CountryApplicationServiceImpl implements CountryApplicationService 
     }
 
     @Override
-    public Optional<DisplayCountryDto> save(CreateCountryDto createCountryDto) {
-        return countryService.save(createCountryDto.toCountry()).map(DisplayCountryDto::from);
+    public Optional<DisplayCountryDto> save(CreateCountryDto dto) {
+        if (dto.name() == null || dto.name().isBlank()) {
+            throw new IllegalArgumentException("Country name is required");
+        }
+        if (dto.continent() == null || dto.continent().isBlank()) {
+            throw new IllegalArgumentException("Continent is required");
+        }
+
+        return countryService.save(dto.toCountry()).map(DisplayCountryDto::from);
     }
 
     @Override
@@ -41,5 +48,10 @@ public class CountryApplicationServiceImpl implements CountryApplicationService 
     @Override
     public void deleteById(Long id) {
         countryService.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        countryService.deleteAll();
     }
 }

@@ -38,5 +38,7 @@ public interface UserApplicationService {
     List<User> getAllUsers();
 
     void deleteByUsername(String username);
+
+    void deleteAll();
 }
 

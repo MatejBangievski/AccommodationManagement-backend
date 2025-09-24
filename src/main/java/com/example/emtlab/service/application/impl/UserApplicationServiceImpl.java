@@ -123,4 +123,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public void deleteByUsername(String username) {
         userService.deleteByUsername(username);
     }
+
+    @Override
+    public void deleteAll() {
+        userService.deleteAll();
+    }
 }

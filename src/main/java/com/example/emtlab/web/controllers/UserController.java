@@ -3,10 +3,7 @@ package com.example.emtlab.web.controllers;
 import com.example.emtlab.dto.*;
 import com.example.emtlab.model.domain.Accommodation;
 import com.example.emtlab.model.domain.User;
-import com.example.emtlab.model.exceptions.InvalidArgumentsException;
-import com.example.emtlab.model.exceptions.InvalidUserCredentialsException;
-import com.example.emtlab.model.exceptions.PasswordsDoNotMatchException;
-import com.example.emtlab.model.exceptions.UsernameAlreadyExistsException;
+import com.example.emtlab.model.exceptions.*;
 import com.example.emtlab.service.application.UserApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/user")
@@ -95,21 +93,62 @@ public class UserController {
     @PostMapping("/{username}/cancel/{accommodationId}")
     //Authentication authentication
     //    User user = (User) authentication.getPrincipal();
-    public ResponseEntity<DisplayUserDto> cancelAccommodation(@PathVariable String username, @PathVariable Long accommodationId) {
-        return userApplicationService.cancelAccommodation(username, accommodationId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<DisplayUserDto> cancelAccommodation(
+            @PathVariable String username,
+            @PathVariable Long accommodationId) {
+        try {
+            return userApplicationService.cancelAccommodation(username, accommodationId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (NoSuchElementException | AccommodationNotReservedException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Operation(summary = "Book accommodation", description = "Books a reserved accommodation for the user")
     @ApiResponse(responseCode = "200", description = "Accommodation booked")
-    @PostMapping("/{username}/book/{accommodationId}")
 //    Authentication authentication
 //        User user = (User) authentication.getPrincipal();
-    public ResponseEntity<DisplayUserDto> bookAccommodation(@PathVariable String username, @PathVariable Long accommodationId) {
-        return userApplicationService.bookAccommodation(username, accommodationId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping("/{username}/book/{accommodationId}")
+    public ResponseEntity<DisplayUserDto> bookAccommodation(
+            @PathVariable String username,
+            @PathVariable Long accommodationId) {
+
+        try {
+            return userApplicationService.bookAccommodation(username, accommodationId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (NoSuchElementException | AccommodationNotReservedException | AccommodationAlreadyBookedException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+
+    @Operation(summary = "A user completes his stay where he's staying by using the accommodation's id", description = "Returns user details")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Stay completed"),
+                    @ApiResponse(responseCode = "404", description = "Invalid accommodation id or no user is staying there")}
+    )
+    @GetMapping("/completeStay/{accommodationId}")
+    public ResponseEntity<DisplayUserDto> completeStay(@PathVariable Long accommodationId) {
+        try {
+            return userApplicationService.completeStay(accommodationId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (NoSuchElementException | AccommodationNotBookedException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @Operation(summary = "Find all reservations", description = "Returns a list of all reservations for the user")
@@ -120,10 +159,10 @@ public class UserController {
     public ResponseEntity<List<Accommodation>> findAllReservations(@PathVariable String username) {
         try {
             List<Accommodation> accommodations = userApplicationService.findAllReservations(username);
-            return ResponseEntity.ok(accommodations); // even if empty, returns 200
+            return ResponseEntity.ok(accommodations);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -138,10 +177,10 @@ public class UserController {
     public ResponseEntity<List<DisplayAccommodationDto>> findAllBookings(@PathVariable String username) {
         try {
             List<DisplayAccommodationDto> accommodations = userApplicationService.findAllBookings(username);
-            return ResponseEntity.ok(accommodations); // even if empty, returns 200
+            return ResponseEntity.ok(accommodations);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -162,20 +201,6 @@ public class UserController {
     @PostMapping("/{username}/reserveAll")
     public ResponseEntity<DisplayUserDto> reserveAllAccommodations(@PathVariable String username) {
         return userApplicationService.reserveAllAccommodations(username)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-
-    @Operation(summary = "A user completes his stay where he's staying by using the accommodation's id", description = "Returns user details")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Stay completed"),
-                    @ApiResponse(responseCode = "404", description = "Invalid accommodation id or no user is staying there")}
-    )
-    @GetMapping("/completeStay/{accommodationId}")
-    public ResponseEntity<DisplayUserDto> completeStay(@PathVariable Long accommodationId) {
-        return userApplicationService.completeStay(accommodationId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -212,10 +237,10 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             List<User> users = userApplicationService.getAllUsers();
-            return ResponseEntity.ok(users); // even if empty, returns 200
+            return ResponseEntity.ok(users);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().build(); // or INTERNAL_SERVER_ERROR if more appropriate
+            return ResponseEntity.badRequest().build();
         }
     }
 }

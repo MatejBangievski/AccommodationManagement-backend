@@ -44,6 +44,22 @@ public class JwtHelper {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public static String generateExpiredToken(String username) {
+        byte[] keyBytes = Decoders.BASE64.decode(JwtConstants.SECRET_KEY);
+        Key signingKey = Keys.hmacShaKeyFor(keyBytes);
+
+        // Expiration - 1 hour ago
+        Date expiredDate = new Date(System.currentTimeMillis() - 3600_000);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expiredDate)
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
     private String buildToken(
             Map<String, Object> extraClaims,
             String subject,

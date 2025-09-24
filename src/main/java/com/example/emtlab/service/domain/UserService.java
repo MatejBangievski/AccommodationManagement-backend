@@ -38,6 +38,8 @@ public interface UserService extends UserDetailsService {
     List<User> getAllUsers();
 
     void deleteByUsername(String username);
+
+    void deleteAll();
 }
 
 

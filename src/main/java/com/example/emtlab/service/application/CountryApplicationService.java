@@ -18,4 +18,6 @@ public interface CountryApplicationService {
     Optional<DisplayCountryDto> update(Long id, CreateCountryDto createCountryDto);
 
     void deleteById(Long id);
+
+    void deleteAll();
 }

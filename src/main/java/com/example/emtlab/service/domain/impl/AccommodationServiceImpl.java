@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -99,6 +100,11 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
+    public void deleteAll() {
+        accommodationRepository.deleteAll();
+    }
+
+    @Override
     public Optional<Accommodation> reserve(Long id, String username) {
         Accommodation accommodation = this.findById(id).get();
         User user = userRepository.findByUsername(username)
@@ -128,23 +134,29 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public Optional<Accommodation> book(Long id, String username) {
-        Accommodation accommodation = this.findById(id).get();
+        Accommodation accommodation = this.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Accommodation not found with id: " + id));
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if (accommodation.isReserved()
-                && accommodation.getUserReserved().getUsername().equals(username)
-                && !accommodation.isBooked()) {
+        if (accommodation.isBooked()) {
+            throw new AccommodationAlreadyBookedException(accommodation.getName());
+        }
 
-            accommodation.setBooked(true);
-            accommodation.setUserBooked(user);
+        if (!accommodation.isReserved() || !accommodation.getUserReserved().getUsername().equals(username)) {
+            throw new AccommodationNotReservedException(accommodation.getName());
+        }
 
-            accommodation.setReserved(false);
-            accommodation.setUserReserved(null);
+        accommodation.setBooked(true);
+        accommodation.setUserBooked(user);
 
-            return Optional.of(accommodationRepository.save(accommodation));
-        } else throw new AccommodationAlreadyBookedException(accommodation.getName());
+        accommodation.setReserved(false);
+        accommodation.setUserReserved(null);
+
+        return Optional.of(accommodationRepository.save(accommodation));
     }
+
 
     @Override
     public Optional<Accommodation> completeStay(Long id) {
